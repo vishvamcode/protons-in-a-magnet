@@ -18,7 +18,8 @@ with an independent Lorentz-force model and published results (see [PROJECT_PLAN
 |---|---|---|
 | 1 | Install OpenTOPAS 4.3.0 (Docker), smoke test | done 9 Oct |
 | 2 | First Bragg peak, 150 MeV in water | done 9 Oct |
-| 3 | Validation sweep 70-230 MeV against PSTAR | runs done 10 Oct; reference values still provisional |
+| 3 | Validation sweep 70-230 MeV against PSTAR (ideal beam, 0 % energy spread) | runs done 10 Oct; reference values still provisional |
+| 3b | Same sweep with a realistic 1 % energy spread (`topas/runs/E*_B0_s1.txt`) | run files ready, runs pending |
 | 4 | Magnetic field on (0.5 / 1.0 / 1.5 T) | planned from 26 Oct |
 | 5-6 | Own Lorentz-force model, rotation-angle lookup table | planned |
 
@@ -47,7 +48,9 @@ off and download PSTAR directly ([data/reference/SOURCE.md](data/reference/SOURC
 ## Simulation set-up
 
 - 40 × 40 × 40 cm `G4_WATER` phantom in vacuum, depth dose scored in 800 slabs of 0.5 mm
-- Mono-energetic proton pencil beam, Gaussian spot σ = 3 mm, parallel, entering on the phantom axis
+- Proton pencil beam, Gaussian spot σ = 3 mm, parallel, entering on the phantom axis. Stage 3 uses a mono-energetic
+  beam (0 % energy spread) so R80 compares cleanly with PSTAR; stage 3b repeats it with a 1 % (1σ) spread, closer
+  to a clinical beam, which mainly widens the distal fall-off
 - Physics: TOPAS default modular list (`g4em-standard_opt4`, `g4h-phy_QGSP_BIC_HP`, `g4decay`,
   `g4ion-binarycascade`, `g4h-elastic_HP`, `g4stopping`)
 - 100,000 histories, fixed seed 1, 12 threads; about 1 minute per energy on a desktop PC
@@ -62,6 +65,7 @@ Needs Docker and the Geant4 11.4.2 data sets (3.4 GB). Windows step-by-step: [do
 bash scripts/get_g4data.sh                      # once: Geant4 data into ~/G4DATA
 pip install -r requirements.txt
 scripts/run_sweep.sh                            # 5 energies -> results/stage3/, then table + figures
+scripts/run_sweep_spread.sh                     # same with 1 % energy spread -> results/stage3_spread1/
 # or from the saved results only:
 python -m analysis.summarize && python -m analysis.figures
 pytest -q
@@ -70,7 +74,7 @@ pytest -q
 ## Repository layout
 
 ```
-topas/runs/          OpenTOPAS parameter files, one per run: E{MeV}_B{tesla}.txt
+topas/runs/          OpenTOPAS parameter files, one per run: E{MeV}_B{tesla}[_s1].txt (_s1 = 1 % energy spread)
 scripts/             run.sh (one run in Docker), run_sweep.sh, get_g4data.sh, plot_depth_dose.py
 analysis/            io.py (read TOPAS CSV), metrics.py (R80 etc.), reference.py, summarize.py, figures.py
 data/reference/      reference ranges + SOURCE.md

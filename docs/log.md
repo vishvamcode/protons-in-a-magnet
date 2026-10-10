@@ -2,6 +2,12 @@
 
 Newest first. Each entry: what was done, the result, and anything that went wrong.
 
+## 2026-10-10 · Stage 3b set up: realistic energy spread
+- Decision (Vishvam, 10 Oct): also model a realistic beam with an energy spread. Kept the 0 % runs as the clean
+  comparison with PSTAR and added `E*_B0_s1.txt` with `u:So/Beam/BeamEnergySpread = 1.0` (percent, 1σ; all else equal).
+- Expected effect: R80 and the peak barely move; the peak gets lower and broader and R20−R80 grows, most at low
+  energy where range straggling is small. Runs pending (`scripts/run_sweep_spread.sh`).
+
 ## 2026-10-10 · Stage 3 validation sweep
 - Ran 70, 100, 150, 200, 230 MeV (100,000 protons each, seed 1, 12 threads, about 1 minute per energy).
 - R80 is 0.22 to 1.45 mm deeper than the PSTAR range (0.42 to 0.59 %), inside the ±1 % acceptance band at every energy
