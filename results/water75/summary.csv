@@ -1,0 +1,4 @@
+energy_MeV,pstar_range_mm,R80_minus_ref_default_mm,R80_minus_ref_icru90_off_mm,R80_minus_ref_water_75eV_mm
+70,40.8,0.22,0.19,-0.09
+150,157.7,0.93,0.68,-0.22
+230,329.47,1.48,1.13,-0.69
