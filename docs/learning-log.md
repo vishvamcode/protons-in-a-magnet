@@ -8,3 +8,6 @@ Quiz questions at the end of each stage, my answers, and the grade. Rules: PROJE
 
 ## Stage 3 · Validation sweep (2026-10-10)
 *(quiz pending)*
+
+## Stage 3b, 4 and 5 · Energy spread, field on, own model (2026-10-10)
+*(quiz pending: questions in the project thread, answers to be logged here)*

@@ -1,6 +1,6 @@
 # Project plan · Protons in a magnet
 
-*Started Thu 8 Oct 2026. Last updated Sat 10 Oct 2026.*
+*Started Thu 8 Oct 2026. Last updated Sat 10 Oct 2026 (evening).*
 
 ## 1 · Goal
 
@@ -38,8 +38,8 @@ step with open tools. It builds on two things I have done before: tracking charg
 |---|---|---|
 | **Thu 8 Oct** | Chose this project; wrote this plan, the stage list and the working rules | Plan |
 | **Fri 9 Oct** | Installed WSL2 + Docker + the OpenTOPAS image; downloaded the Geant4 data (3.4 GB). Smoke test with the bundled `Dose.txt` example passed. First own run: 150 MeV, 100,000 protons, Bragg peak at 156.75 mm, R80 158.63 mm, 0.29 % statistical uncertainty at the peak, 54 s on 12 threads | **1 and 2 done** (planned for 12-18 Oct) |
-| **Sat 10 Oct** | Ran 70, 100, 150, 200 and 230 MeV with an ideal beam (0 % energy spread). R80 is 0.22-1.45 mm (about +0.5 %) deeper than the reference range at every energy, inside the 1 % threshold. Wrote the analysis package (`analysis/`) with tests, made Fig 1 and Fig 2, put the project on GitHub. Prepared a second sweep with a realistic 1 % energy spread | **3 runs done**; 3b prepared |
-| **Sun 11 Oct** (next) | Run the 1 % energy-spread sweep and compare it with the ideal beam. Download the PSTAR table directly from NIST and replace the provisional reference values. Answer the Stage 1-3 quiz. Start the reading for `docs/targets.md` (task 0b) | 3b, 3 close-out |
+| **Sat 10 Oct** | Morning: ran 70, 100, 150, 200 and 230 MeV with an ideal beam; R80 about +0.5 % deeper than PSTAR at every energy, inside the 1 % threshold. Wrote the analysis package with tests, Fig 1 and Fig 2, put the project on GitHub. Afternoon (decided to finish the core now): replaced the provisional reference with the NIST PSTAR table; ran the 1 % energy-spread sweep (3b); found the cause of the +0.5 % offset (water I = 78 vs 75 eV, tested with 6 extra runs); ran the 16 field runs (Stage 4); wrote and tested my Lorentz-force model (Stage 5) and compared it with the simulation and with Schellhammer 2018 and Wang 2021. Figs 3-7 | **3, 3b, 4, 5 done** |
+| **Sun 11 Oct** (next) | Answer the stage quizzes (1-3, 3b, 4, 5) in `docs/learning-log.md`. Read through `analysis/lorentz_ode.py` and `analysis/lateral.py` until I can explain every line. Finish the reading for `docs/targets.md` (Duetschler 2023, Wolf & Bortfeld 2012) | review |
 
 ## 4 · Stages
 
@@ -52,7 +52,7 @@ wrong answers means revisiting before moving on.
 | # | Task | Done when | Status |
 |---|---|---|---|
 | 0a | Physics primer: Bethe-Bloch, range straggling, multiple Coulomb scattering, R80 vs CSDA range, Lorentz force on a slowing proton | 1 page of notes in my own words | to do |
-| 0b | Read Duetschler 2023 (abstract + methods), Schellhammer 2018 (arXiv 1709.00373), Wang 2021 (PMC8369236), Wolf & Bortfeld 2012 | `docs/targets.md` lists ≥ 3 target numbers with sources | started; 1 of 4 filled |
+| 0b | Read Duetschler 2023 (abstract + methods), Schellhammer 2018 (arXiv 1709.00373), Wang 2021 (PMC8369236), Wolf & Bortfeld 2012 | `docs/targets.md` lists ≥ 3 target numbers with sources | 3 of 4 filled (PSTAR, Schellhammer, Wang); Duetschler and Wolf-Bortfeld still to read |
 | 0c | Choose the install route | decision written in README | **done 9 Oct** (WSL2 + Docker) |
 
 ### Build
@@ -61,13 +61,13 @@ wrong answers means revisiting before moving on.
 |---|---|---|---|---|
 | 1 | **Install + smoke test**: OpenTOPAS runs the bundled `Dose.txt` example | 12-18 Oct | example output exists; versions in README | **done 9 Oct** |
 | 2 | **First Bragg peak**: 40 × 40 × 40 cm water box, 150 MeV pencil beam, depth dose in 0.5 mm bins with mean + standard deviation | by 18 Oct | curve plotted; statistical uncertainty < 1 % in the peak bins | **done 9 Oct** (0.29 %) |
-| 3 | **Validation sweep**: 70, 100, 150, 200, 230 MeV. R80, R90, peak depth, distal fall-off (R20 − R80); compare R80 with PSTAR | 19-25 Oct | **Fig 1** + table; \|R80 − PSTAR\| ≤ 1 mm or ≤ 1 % of range, or the gap explained, never tuned | runs and figures **done 10 Oct**; open: PSTAR from NIST directly, test the ICRU 90 explanation of the +0.5 % offset |
-| 3b | **Realistic beam**: the same sweep with a 1 % (1σ) energy spread | added 10 Oct | effect on peak height, R80 and fall-off quantified against the ideal beam | run files ready; run on 11 Oct |
+| 3 | **Validation sweep**: 70, 100, 150, 200, 230 MeV. R80, R90, peak depth, distal fall-off (R20 − R80); compare R80 with PSTAR | 19-25 Oct | **Fig 1** + table; \|R80 − PSTAR\| ≤ 1 mm or ≤ 1 % of range, or the gap explained, never tuned | **done 10 Oct**: all within 0.6 % of the NIST table; offset explained by I = 78 eV (G4_WATER) vs 75 eV (PSTAR): with 75 eV water it becomes −0.1 to −0.2 % |
+| 3b | **Realistic beam**: the same sweep with a 1 % (1σ) energy spread | added 10 Oct | effect on peak height, R80 and fall-off quantified against the ideal beam | **done 10 Oct**: R80 −0.03 to −0.47 mm, fall-off about doubles, peak about 20 % lower (Fig 3) |
 | ⛔ | **GATE, Sun 25 Oct**: no validated Fig 1 → switch to the backup project (FLASH data re-analysis, Python only) and continue this one after the application | | decision logged | on track |
-| 4 | **Field on**: `DipoleMagnet` on the phantom, field ⟂ beam, 0.5 / 1.0 / 1.5 T at 100, 150, 200, 230 MeV. Score 3D dose; dose-weighted lateral centroid per depth slice → trajectory x(z) | 26 Oct - 1 Nov (can start once Stage 3 is closed) | **Fig 3**: trajectories; table of lateral shift at the Bragg peak and range shortening | not started |
-| 5 | **My own model**: direction from dp⃗/ds = q (v̂ × B⃗), magnitude from PSTAR dE/dx, integrated with `scipy.integrate.solve_ivp`. Tests: B = 0 gives a straight line; radius at constant energy matches p/(qB) | 2-8 Nov | **Fig 4**: TOPAS vs ODE vs Wolf-Bortfeld vs Wang 2021 / Schellhammer 2018. Agreement stated in mm | not started |
-| 6 | **Lookup table**: incremental rotation angle vs water-equivalent depth, Duetschler-style | by 8 Nov | **Fig 5** | not started |
-| 7 | *(stretch, only if 1-6 are done by Thu 12 Nov)* `ProtonLET` along depth, 0 T vs 1.5 T | 12-15 Nov | Fig 6 | optional |
+| 4 | **Field on**: `DipoleMagnet` on the phantom, field ⟂ beam, 0.5 / 1.0 / 1.5 T at 100, 150, 200, 230 MeV. Score x-z dose; dose-weighted lateral centroid per depth slice → trajectory x(z) | 26 Oct - 1 Nov | trajectories; table of lateral shift at the Bragg peak and range shortening | **done 10 Oct**: at 1.5 T the peak moves 3.4 / 11.5 / 26.7 / 39.6 mm sideways and R80 shortens 0.1 / 0.6 / 2.1 / 3.6 mm (Figs 4-6) |
+| 5 | **My own model**: direction from dp⃗/ds = q (v̂ × B⃗), magnitude from PSTAR dE/dx, integrated with `scipy.integrate.solve_ivp`. Tests: B = 0 gives a straight line; radius at constant energy matches p/(qB) | 2-8 Nov | TOPAS vs ODE vs Wang 2021 / Schellhammer 2018. Agreement stated in mm | **done 10 Oct**: model within 2-5 % (≤ 1.1 mm) of TOPAS; matches both papers (Fig 7). Wolf-Bortfeld not yet compared |
+| 6 | **Lookup table**: incremental rotation angle vs water-equivalent depth, Duetschler-style | optional | Fig 8 | not started |
+| 7 | *(stretch)* `ProtonLET` along depth, 0 T vs 1.5 T | optional | Fig 9 | not started |
 
 ### Review
 
@@ -83,19 +83,19 @@ wrong answers means revisiting before moving on.
 
 | Date | Milestone | Status |
 |---|---|---|
-| Sun 11 Oct | Plan done, targets started | in progress |
+| Sun 11 Oct | Plan done, targets started | targets 3 of 4 |
 | Sun 18 Oct | First Bragg peak | **reached 9 Oct** |
-| **Sun 25 Oct** | **Fig 1 validated (gate)** | runs pass; reference to be confirmed from NIST |
-| Sun 1 Nov | Fig 3 (deflection) | |
-| Sun 8 Nov | Figs 4 + 5 | |
+| **Sun 25 Oct** | **Fig 1 validated (gate)** | **passed 10 Oct** (NIST table) |
+| Sun 1 Nov | Deflection figures | **reached 10 Oct** (Figs 4-6) |
+| Sun 8 Nov | Model vs simulation vs literature | **reached 10 Oct** (Fig 7); lookup table optional |
 | Sun 15 Nov | Write-up draft | |
 | **Fri 20 Nov** | **Freeze** | |
 
 ## 6 · Definition of done
 
-- [ ] Fig 1: R80 for 5 energies agrees with PSTAR within the threshold, or the gap is explained (*runs pass; PSTAR still provisional*)
-- [ ] Fig 4: lateral Bragg-peak shift at 1.5 T, TOPAS vs my ODE model, agreement stated in mm, plus the literature points with their sources
-- [ ] Every reference number in `data/reference/` has a `SOURCE.md` (citation, URL, date accessed, page/figure)
+- [x] Fig 1/2: R80 for 5 energies agrees with PSTAR within the threshold, and the gap is explained (*10 Oct*)
+- [x] Lateral Bragg-peak shift at 1.5 T, TOPAS vs my ODE model, agreement stated in mm, plus the literature points with their sources (Figs 6, 7; *10 Oct*)
+- [x] Every reference number in `data/reference/` has a `SOURCE.md` (citation, URL, date accessed, page/figure)
 - [x] `pytest` passes; figures regenerate from one command
 - [ ] 2-page write-up with a limitations section
 - [ ] `docs/learning-log.md` has a review quiz for every stage, answered by me
@@ -108,6 +108,6 @@ wrong answers means revisiting before moving on.
 |---|---|---|
 | Install takes > 1 week | no `Dose.txt` run by Wed 14 Oct | *Resolved: installed 9 Oct* |
 | Runs too slow | > 30 min per run | fewer histories for sweeps, more only for final figures; coarser lateral bins. *So far about 1 min per run* |
-| Mismatch with PSTAR I can't explain | > 2 mm | check physics list, energy spread, bin size *before* changing anything. *Current offset ≤ 1.45 mm, ICRU 90 hypothesis* |
+| Mismatch with PSTAR I can't explain | > 2 mm | check physics list, energy spread, bin size *before* changing anything. *Resolved 10 Oct: offset ≤ 1.48 mm, explained by the water I-value* |
 | Courses squeeze time | 2 stages late | drop Stage 7, then Stage 6. Stages 1-5 are the minimum |
 | I can't explain a part | weak quiz answer | stop building; rework the explanation first |

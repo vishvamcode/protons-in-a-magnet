@@ -2,6 +2,19 @@
 
 Newest first. Each entry: what was done, the result, and anything that went wrong.
 
+## 2026-10-10 (afternoon) · Stages 3b, 4 and 5; offset explained
+- Reference: Vishvam pasted the NIST PSTAR liquid-water table; saved as `data/reference/pstar_water_liquid.txt`.
+  The provisional UCL values agreed with it within 0.03 mm. R80 − PSTAR: +0.22 / +0.41 / +0.93 / +1.10 / +1.48 mm.
+- Runs now happen in the cloud container as well (Geant4 data from conda-forge; 150 MeV rerun identical to the PC).
+- Stage 3b: 1 % energy spread moves R80 by −0.03 to −0.47 mm, doubles the fall-off, lowers the peak by about 20 %.
+- Offset test: ICRU 90 data off changes R80 by only −0.03 to −0.35 mm. Water with I = 75 eV (TOPAS built-in
+  `Water_75eV`) gives −0.09 / −0.22 / −0.69 mm. So the +0.5 % is the I-value of `G4_WATER` (78 eV) vs PSTAR (75 eV).
+  The rest (−0.2 %) is consistent with R80 tracking the projected range. Default set-up unchanged (no tuning).
+- Stage 4: 16 runs, field along y in the phantom. Bug fixed: `scripts/run.sh` needs an absolute path for the
+  Docker volume. Sideways shift of the peak at 1.5 T: 3.37 / 11.47 / 26.66 / 39.63 mm (100-230 MeV); linear in B.
+- Stage 5: `analysis/lorentz_ode.py`, 7 tests. Model within 2-5 % of TOPAS (always slightly higher), matches
+  Schellhammer 2018 (film, 0.95 T) and Wang 2021 (FLUKA, 1.5 T). Figs 3-7.
+
 ## 2026-10-10 · Stage 3b set up: realistic energy spread
 - Decision (Vishvam, 10 Oct): also model a realistic beam with an energy spread. Kept the 0 % runs as the clean
   comparison with PSTAR and added `E*_B0_s1.txt` with `u:So/Beam/BeamEnergySpread = 1.0` (percent, 1σ; all else equal).
