@@ -1,7 +1,0 @@
-# Proton range in liquid water from NIST PSTAR, as tabulated on the UCL proton therapy wiki (see SOURCE.md)
-energy_MeV,range_mm
-70,40.80
-100,77.18
-150,157.70
-200,259.60
-230,329.50

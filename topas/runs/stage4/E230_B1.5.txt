@@ -1,0 +1,74 @@
+# E230_B1.5.txt : 230 MeV proton pencil beam in water, uniform 1.5 T field across the beam
+# Project 1 "Protons in a magnet", Stage 4 field on (OpenTOPAS v4.3.0)
+
+# ---- World: vacuum, so no energy is lost before the beam reaches the water
+d:Ge/World/HLX       = 30. cm
+d:Ge/World/HLY       = 30. cm
+d:Ge/World/HLZ       = 30. cm
+s:Ge/World/Material  = "Vacuum"
+
+# ---- Water phantom: 40 x 40 x 40 cm (HL = half length), centred on the origin
+s:Ge/Phantom/Type     = "TsBox"
+s:Ge/Phantom/Parent   = "World"
+s:Ge/Phantom/Material = "G4_WATER"
+d:Ge/Phantom/HLX      = 20. cm
+d:Ge/Phantom/HLY      = 20. cm
+d:Ge/Phantom/HLZ      = 20. cm
+i:Ge/Phantom/ZBins    = 800        # 400 mm / 800 = 0.5 mm depth bins
+d:Ge/Phantom/RotX     = 180. deg   # flip the box so bin 0 is the entrance face (as in examples/Scoring/DepthDose.txt)
+
+# ---- Magnetic field: uniform, only inside the water, perpendicular to the beam
+# Field along the phantom's local y; TOPAS rotates it with the box (TsMagneticFieldDipole.cc), so after RotX = 180 deg
+# it points along -y in the world. Beam along -z, B along -y: the Lorentz force F = q v x B bends protons along x.
+s:Ge/Phantom/Field                   = "DipoleMagnet"
+u:Ge/Phantom/MagneticFieldDirectionX = 0.0
+u:Ge/Phantom/MagneticFieldDirectionY = 1.0      # must be a unit vector (TOPAS does not normalise it)
+u:Ge/Phantom/MagneticFieldDirectionZ = 0.0
+d:Ge/Phantom/MagneticFieldStrength   = 1.5 tesla
+
+# ---- Beam starts 1 cm in front of the water and travels in -z
+d:Ge/BeamPosition/TransZ = 21. cm
+d:Ge/BeamPosition/RotX   = 180. deg
+
+s:So/Beam/Type                     = "Beam"
+s:So/Beam/Component                = "BeamPosition"
+s:So/Beam/BeamParticle             = "proton"
+d:So/Beam/BeamEnergy               = 230. MeV
+u:So/Beam/BeamEnergySpread         = 0.0      # percent; mono-energetic, so R80 compares cleanly with PSTAR
+s:So/Beam/BeamPositionDistribution = "Gaussian"
+s:So/Beam/BeamPositionCutoffShape  = "Ellipse"
+d:So/Beam/BeamPositionCutoffX      = 2. cm
+d:So/Beam/BeamPositionCutoffY      = 2. cm
+d:So/Beam/BeamPositionSpreadX      = 3. mm    # spot sigma
+d:So/Beam/BeamPositionSpreadY      = 3. mm
+s:So/Beam/BeamAngularDistribution  = "None"   # parallel beam
+i:So/Beam/NumberOfHistoriesInRun   = 100000
+
+# ---- Physics: TOPAS default list written out so the run file records it
+sv:Ph/Default/Modules = 6 "g4em-standard_opt4" "g4h-phy_QGSP_BIC_HP" "g4decay" "g4ion-binarycascade" "g4h-elastic_HP" "g4stopping"
+
+# ---- Scorer: dose to water in each 0.5 mm depth slab (whole 40 x 40 cm cross-section)
+s:Sc/DepthDose/Quantity                  = "DoseToMedium"
+s:Sc/DepthDose/Component                 = "Phantom"
+s:Sc/DepthDose/OutputType                = "csv"
+s:Sc/DepthDose/OutputFile                = "DepthDose_E230_B1.5"
+sv:Sc/DepthDose/Report                   = 2 "Sum" "Standard_Deviation"
+s:Sc/DepthDose/IfOutputFileAlreadyExists = "Overwrite"
+
+# ---- Scorer 2: dose map in the x-z plane (summed over y), 1 mm across x by 0.5 mm in depth.
+# Used to find the sideways position of the beam at each depth. Its own binning makes TOPAS score it in a parallel copy.
+s:Sc/DoseXZ/Quantity                  = "DoseToMedium"
+s:Sc/DoseXZ/Component                 = "Phantom"
+i:Sc/DoseXZ/XBins                     = 400      # 400 mm / 400 = 1 mm across the beam
+i:Sc/DoseXZ/YBins                     = 1
+i:Sc/DoseXZ/ZBins                     = 800      # 0.5 mm in depth, same as DepthDose
+s:Sc/DoseXZ/OutputType                = "csv"
+s:Sc/DoseXZ/OutputFile                = "DoseXZ_E230_B1.5"
+sv:Sc/DoseXZ/Report                   = 1 "Sum"
+s:Sc/DoseXZ/IfOutputFileAlreadyExists = "Overwrite"
+
+# ---- Run control
+i:Ts/Seed                       = 1        # fixed seed, so the run is reproducible
+i:Ts/NumberOfThreads            = 12       # set to your number of CPU cores
+i:Ts/ShowHistoryCountAtInterval = 10000
+b:Ts/PauseBeforeQuit            = "False"

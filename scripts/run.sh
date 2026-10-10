@@ -10,6 +10,7 @@ name="$(basename "$run_file" .txt)"
 repo="$(cd "$(dirname "$0")/.." && pwd)"
 out="${2:-$repo/results/$name}"
 mkdir -p "$out"
+out="$(cd "$out" && pwd)"   # docker needs an absolute path for the volume mount
 [ -d "$G4DATA" ] || { echo "Geant4 data not found at $G4DATA (run scripts/get_g4data.sh)"; exit 1; }
 cp "$run_file" "$out/"
 # TOPAS writes its output next to the parameter file, inside /simulations
