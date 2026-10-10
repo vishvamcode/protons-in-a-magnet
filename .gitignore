@@ -7,3 +7,4 @@ results/*/log_*.txt
 results/E*_B*/
 *.png
 !figures/*.png
+CLAUDE.md
