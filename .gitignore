@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+scratch/
+results/*/log_*.txt
+results/E*_B*/
+*.png
+!figures/*.png
